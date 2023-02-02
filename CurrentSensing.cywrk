@@ -3,7 +3,7 @@
 <!--This file is machine generated and read. It is not intended to be edited by hand.-->
 <!--Due to this, there is no schema for this file.-->
 <CyGuid_2867d519-54d2-4c01-9830-c51cb08bc3dd type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWorkspaceSerialize" version="5" xml_contents_version="3" name="CurrentSensing" persistent="CurrentSensing.cywrk" platform="NOT_USED">
-<current_project name=".\currentSensing_USBFS_DMA.cydsn\currentSensing_USBFS_DMA.cyprj" />
+<current_project name=".\currentSensing_USBFS_ISR.cydsn\currentSensing_USBFS_ISR.cyprj" />
 <wrkspc_folders />
 <files />
 <projects>

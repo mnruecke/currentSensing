@@ -22,15 +22,19 @@ serialPort = '\\\\.\\COM11' # USBFS 8; UART 22
 baudrate = 115200
 time_out = 10
 
-
 # sequence details
-bytesPerSample    = 2
-bufInputSize      = 100 *60 *5*2
-num_of_channels   = 5
-sampling_time_ms  = 1/100 # kHz / kHz
+bytesPerSample      = 2
+bufInputSize        = 100 *60 *5*2 # max: 60000
+num_of_channels     = 5
+sampling_time_ms    = 1/100 # kHz / kHz
+channel_switch_t_ms = 1/1000 # kHz / kHz
 
-data_is_interleaved = False
+data_is_interleaved = True
 
+# plotting options
+data_cut_factor = 1000
+cut_front       = 1
+clear_old_plot  = 1
 
 # list of commands 
 p_run_sequ      = b'r' # starts the sequence
@@ -92,26 +96,37 @@ for repetition_i in range( 1 ):
     seq_duration            = data_pts_per_channel * sampling_time_ms
     t = np.linspace( 0, seq_duration, data_pts_per_channel)
     
+    if clear_old_plot:
+        plt.cla()
+    data_cut = data_pts_per_channel // data_cut_factor
+
     for ch in range( 0, num_of_channels ):
         
-        channel_delta_t = (     ch#(num_of_channels-ch-1)
-                              * sampling_time_ms
-                              / num_of_channels
-                          )
+        channel_t_shift = (     ch#(num_of_channels-ch-1)
+                              * channel_switch_t_ms
+                          )    
+        time = t + channel_t_shift
         
         if data_is_interleaved:
-            plt.plot(
-                t + channel_delta_t,
-                adc_data_int16[ ch :: num_of_channels ]
-            )# Interleaved data
+            volt_over_time = adc_data_int16[ ch :: num_of_channels ]
+            # Interleaved data
         else:
-            plt.plot(
-                t + channel_delta_t,
+            volt_over_time = (
                 adc_data_int16[ ch * data_pts_per_channel :
                                 (ch + 1) * data_pts_per_channel
                 ]
-            )# Consecutive data blocks
-        
+            )
+            # Consecutive data blocks
+                
+        if cut_front:
+            plt.plot( time[ : data_cut ],
+                      volt_over_time[ : data_cut ]
+            )
+        else:
+            plt.plot( time[ -data_cut : ],
+                      volt_over_time[ -data_cut : ]
+            )
+            
     plt.xlabel('time [ms]')
     plt.ylabel('signal [mV]')
     plt.show()  
