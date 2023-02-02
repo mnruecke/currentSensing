@@ -32,8 +32,8 @@ channel_switch_t_ms = 1/1000 # kHz / kHz
 data_is_interleaved = True
 
 # plotting options
-data_cut_factor = 1000
-cut_front       = 1
+data_cut_factor = 100
+show_front      = 0
 clear_old_plot  = 1
 
 # list of commands 
@@ -118,7 +118,7 @@ for repetition_i in range( 1 ):
             )
             # Consecutive data blocks
                 
-        if cut_front:
+        if show_front:
             plt.plot( time[ : data_cut ],
                       volt_over_time[ : data_cut ]
             )
