@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 """ main settings """
 
 # Serial port:
-serialPort = '\\\\.\\COM11' # USBFS 8; UART 22 
+serialPort = '\\\\.\\COM9' # USBFS 8; UART 22 
 baudrate = 115200
 time_out = 10
 
