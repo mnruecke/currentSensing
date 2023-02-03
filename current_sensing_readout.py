@@ -41,14 +41,14 @@ p_run_sequ      = b'r' # starts the sequence
 p_get_data      = b'o' # requests binary ADC data
 p_get_chip_id   = b's'
 
-U_adc_ref       = 999 # 0...999; U = 4.096 mV * U_adc_ref
+U_adc_ref       = 50 # 0...999; U = 4.096 mV * U_adc_ref
 p_set_adc_ref   = bytes("a{:03}".format(U_adc_ref),'UTF-8')
 
 """ END - main settings """
 
 
 """ start measurement on PSoC and get data """
-for repetition_i in range( 1 ):
+for repetition_i in range( 1000 ):
 
     try: # open and interact with serial port 
         ser = serial.Serial( serialPort, baudrate, timeout=time_out)
@@ -105,7 +105,7 @@ for repetition_i in range( 1 ):
         channel_t_shift = (     ch#(num_of_channels-ch-1)
                               * channel_switch_t_ms
                           )    
-        time = t + channel_t_shift
+        x_time = t + channel_t_shift
         
         if data_is_interleaved:
             volt_over_time = adc_data_int16[ ch :: num_of_channels ]
@@ -119,11 +119,11 @@ for repetition_i in range( 1 ):
             # Consecutive data blocks
                 
         if show_front:
-            plt.plot( time[ : data_cut ],
+            plt.plot( x_time[ : data_cut ],
                       volt_over_time[ : data_cut ]
             )
         else:
-            plt.plot( time[ -data_cut : ],
+            plt.plot( x_time[ -data_cut : ],
                       volt_over_time[ -data_cut : ]
             )
             
