@@ -59,7 +59,8 @@ void uart_interface(void){
         if( command[0] == KEY_CLEAR_SCREEN      ) clear_terminal();
         if( command[0] == KEY_RESET             ) CySoftwareReset();
         if( command[0] == KEY_GET_ASCII_DAT     ) get_signal();
-        if( command[0] == KEY_GET_BINARY_DAT    ) get_binary_data();        
+        if( command[0] == KEY_GET_BINARY_DAT    ) get_binary_data();   
+        if( command[0] == KEY_GET_DATA_HEAD     ) get_binary_data_head();
         if( command[0] == KEY_SET_ADC_REF       ) set_adc_ref_voltage( (uint8*)command );
         if( command[0] == KEY_GET_CHIP_ID       ) get_chip_id_uart();
         if( command[0] == KEY_FLASH_TEST        ) test_flash();
@@ -145,6 +146,13 @@ void get_binary_data(void){
     for(int i=0; i<N_MAX_SAMPLES; ++i)
         UART_PutArray( (uint8*)signals + 2*i, 2 );
 }// get_binary_data()
+
+void get_binary_data_head(void){
+    // Send only the first DATA_HEAD bytes
+    int data_part_size = N_MAX_SAMPLES > DATA_HEAD ? DATA_HEAD : N_MAX_SAMPLES;
+    for(int i=0; i < (data_part_size / 2); ++i)
+        UART_PutArray( (uint8*)signals + 2*i, 2 );
+}// get_binary_data_head()
 
 void get_chip_id( struct ID_STR* chip_id ){
     

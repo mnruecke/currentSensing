@@ -28,6 +28,7 @@
     #define KEY_CLEAR_SCREEN    'c'
     #define KEY_GET_ASCII_DAT   'g'
     #define KEY_GET_BINARY_DAT  'o'
+    #define KEY_GET_DATA_HEAD   'h'
     #define KEY_SET_ADC_REF     'a'
     #define KEY_GET_CHIP_ID     's'
     #define KEY_FLASH_TEST      'f'
@@ -41,6 +42,8 @@
     #define USBUART_BUFFER_SIZE 64u //Original
     #define USBFS_DEVICE    (0u)
     #define USBFS_TX_SIZE   60    // exakt package size
+    
+    #define DATA_HEAD             600
 
     #define PSEUDO_ID_LENGTH 34
     struct ID_STR{
@@ -54,6 +57,7 @@
     void usbfs_interface(void);
     void get_signal(void);
     void get_binary_data(void);
+    void get_binary_data_head(void);
     void set_adc_range(int);
     void get_chip_id( struct ID_STR* );
     void get_chip_id_usbfs(void);
