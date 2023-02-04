@@ -30,7 +30,7 @@ sampling_time_ms    = 1/100 # kHz / kHz
 channel_switch_t_ms = 1/1000 # kHz / kHz
 
 data_is_interleaved = True
-send_head_only      = True
+send_head_only      = False
 head_size           = 600
 
 # plotting options

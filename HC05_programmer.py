@@ -27,10 +27,10 @@ import serial
 
 com_port_prog  = 8 # com port of uart connection to HC-05 module 
 
-
+# Choose module name and module baudrate to be programmed in:
 module_name = b'RDS'
-#module_baud_rate  = b'115200'
-module_baud_rate  = b'1382400'
+module_baud_rate  = b'115200'
+#module_baud_rate  = b'1382400'
   
 
 
