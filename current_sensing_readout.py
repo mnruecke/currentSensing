@@ -29,6 +29,7 @@ num_of_channels     = 5
 sampling_time_ms    = 1/100 # kHz / kHz
 channel_switch_t_ms = 1/1000 # kHz / kHz
 
+software_trigger    = False
 data_is_interleaved = True
 send_head_only      = False
 head_size           = 600
@@ -44,8 +45,9 @@ p_get_data      = b'o' # requests binary ADC data
 p_get_data_head = b'h' # only the first 600 bytes
 p_get_chip_id   = b's'
 
-U_adc_ref       = 99 # 0...999; U = 4.096 mV * U_adc_ref
+U_adc_ref       = 400 # 0...999; U = 4.096 mV * U_adc_ref
 p_set_adc_ref   = bytes("a{:03}".format(U_adc_ref),'UTF-8')
+V_per_A         = 34.39 # V / A; Current sensor calibration
 
 """ END - main settings """
 
@@ -64,8 +66,9 @@ try: # open and interact with serial port
         ser.write( p_set_adc_ref )
         time.sleep( 0.005 )
         
-        ser.write( p_run_sequ )
-        time.sleep(0.030)
+        if software_trigger:
+            ser.write( p_run_sequ )
+            time.sleep(0.030)
         ser.flushInput()
         time.sleep(0.005)
         if send_head_only:
@@ -110,30 +113,36 @@ try: # open and interact with serial port
             channel_t_shift = (     ch#(num_of_channels-ch-1)
                                   * channel_switch_t_ms
                               )    
-            x_time = t + channel_t_shift
+            x_time = t - channel_t_shift
             
             if data_is_interleaved:
-                volt_over_time = adc_data_int16[ ch :: num_of_channels ]
+                ampere_over_time = (
+                      1/V_per_A * np.array(
+                          adc_data_int16[ ch :: num_of_channels ]
+                      )
+                )
                 # Interleaved data
             else:
-                volt_over_time = (
-                    adc_data_int16[ ch * data_pts_per_channel :
-                                    (ch + 1) * data_pts_per_channel
-                    ]
+                ampere_over_time = (                       
+                     1/V_per_A * np.array(
+                           adc_data_int16[ ch * data_pts_per_channel :
+                                        (ch + 1) * data_pts_per_channel
+                           ]
+                       )
                 )
                 # Consecutive data blocks
-                    
+                                
             if show_front:
                 plt.plot( x_time[ : data_cut ],
-                          volt_over_time[ : data_cut ]
+                          ampere_over_time[ : data_cut ]
                 )
             else:
                 plt.plot( x_time[ -data_cut : ],
-                          volt_over_time[ -data_cut : ]
+                          ampere_over_time[ -data_cut : ]
                 )
                 
         plt.xlabel('time [ms]')
-        plt.ylabel('signal [mV]')
+        plt.ylabel('signal [a.u.]')
         plt.show()  
 
 finally: # close serial port
