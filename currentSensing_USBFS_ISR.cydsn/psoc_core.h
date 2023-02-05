@@ -23,6 +23,9 @@
     #define HIGH    1
     #define LOW     0    
     
+    #define TRIGGER_FROM_SIGNAL_ON    1
+    #define TRIGGER_FROM_SIGNAL_OFF   0
+    
     #define KEY_RUN             'r'
     #define KEY_RESET           'x'
     #define KEY_CLEAR_SCREEN    'c'
@@ -32,8 +35,12 @@
     #define KEY_SET_ADC_REF     'a'
     #define KEY_GET_CHIP_ID     's'
     #define KEY_FLASH_TEST      'f'
-    
-    
+    #define KEY_IS_NEW_SIGNAL   'n'
+    #define KEY_TRIGGER_THRESHOLD 't'
+
+    // Trigger
+    #define TRIGGER_THRESHOLD    200
+  
     // Terminal
     #define TERMINAL_N_ROWS       40
     #define TERMINAL_N_COLUMNS    80
@@ -63,6 +70,9 @@
     void get_chip_id_usbfs(void);
     void get_chip_id_uart(void);
     void test_flash(void);
+    void is_new_signal_uart(void);
+    void is_new_signal_usbfs(void);
+    void set_trigger_threshold(uint8*);
     
     CY_ISR_PROTO( isr_start_sampling );
 

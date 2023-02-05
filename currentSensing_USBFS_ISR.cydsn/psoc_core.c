@@ -29,6 +29,13 @@ void psoc_init(void){
 
     isr_Start_Sampling_StartEx( isr_start_sampling );
     
+    Comp_Trigger_Signal_Start();
+    VDAC8_Trigger_Signal_Threshold_Start();
+    VDAC8_Trigger_Signal_Threshold_SetValue( TRIGGER_THRESHOLD );
+    En_Trigger_Signal_Write( TRIGGER_FROM_SIGNAL_ON );
+    
+    signal_changed_since_readout = FALSE,
+    
     // TopDesignSheet: Current Sensing
     init_adda();
 
@@ -61,9 +68,15 @@ void uart_interface(void){
         if( command[0] == KEY_GET_ASCII_DAT     ) get_signal();
         if( command[0] == KEY_GET_BINARY_DAT    ) get_binary_data();   
         if( command[0] == KEY_GET_DATA_HEAD     ) get_binary_data_head();
-        if( command[0] == KEY_SET_ADC_REF       ) set_adc_ref_voltage( (uint8*)command );
+        if( command[0] == KEY_SET_ADC_REF       ) set_adc_ref_voltage(
+                                                            (uint8*)command
+                                                  );
         if( command[0] == KEY_GET_CHIP_ID       ) get_chip_id_uart();
         if( command[0] == KEY_FLASH_TEST        ) test_flash();
+        if( command[0] == KEY_IS_NEW_SIGNAL     ) is_new_signal_uart();
+        if( command[0] == KEY_TRIGGER_THRESHOLD ) set_trigger_threshold(
+                                                            (uint8*)command
+                                                  );
 
     }//END if( UART_GetRxBufferSize() != 0 )   
 }//END uart_interface()
@@ -110,10 +123,18 @@ void usbfs_interface(void){
                     set_adc_ref_voltage( buffer );
                                 
                 // 2) Chip information
-               if ( buffer[0] == KEY_GET_CHIP_ID )
+                if( buffer[0] == KEY_GET_CHIP_ID )
                     get_chip_id_usbfs();
+                    
+                // 3) Inquire if signal changed afte last readout
+                if( buffer[0] == KEY_IS_NEW_SIGNAL )
+                    is_new_signal_usbfs();
+                    
+                // 4) Set trigger threshold
+                if( buffer[0] == KEY_TRIGGER_THRESHOLD )
+                    set_trigger_threshold( buffer );
             
-                // 3) Get the binary data from signal buffer (5 channels interleaved)              
+                // 4) Get the binary data from signal buffer (5 channels interleaved)              
                 if ( buffer[0] == KEY_GET_BINARY_DAT ){
                     LED_P2p1_Write(1u);
                     for(int j=0; j < ( N_MAX_SAMPLES / USBFS_TX_SIZE *2); j++)
@@ -125,6 +146,9 @@ void usbfs_interface(void){
                         USBUART_PutData( (uint8*)signals + j * USBFS_TX_SIZE,
                                          USBFS_TX_SIZE );  
                     }
+                    
+                    signal_changed_since_readout = FALSE;
+                    
                     LED_P2p1_Write(0u);
                 }// END send binary adc dat
             }
@@ -143,8 +167,11 @@ void get_signal(void){
 }// get_signal()
 
 void get_binary_data(void){
+    
     for(int i=0; i<N_MAX_SAMPLES; ++i)
         UART_PutArray( (uint8*)signals + 2*i, 2 );
+        
+    signal_changed_since_readout = FALSE;        
 }// get_binary_data()
 
 void get_binary_data_head(void){
@@ -152,6 +179,8 @@ void get_binary_data_head(void){
     int data_part_size = N_MAX_SAMPLES > DATA_HEAD ? DATA_HEAD : N_MAX_SAMPLES;
     for(int i=0; i < (data_part_size / 2); ++i)
         UART_PutArray( (uint8*)signals + 2*i, 2 );
+        
+    signal_changed_since_readout = FALSE;
 }// get_binary_data_head()
 
 void get_chip_id( struct ID_STR* chip_id ){
@@ -205,8 +234,45 @@ void test_flash(void){
     
 }//END test_flash()
 
+void is_new_signal_uart(void){
+    
+    if( signal_changed_since_readout )
+        UART_PutChar('Y');
+    else
+        UART_PutChar('N');
+    
+}//END is_new_signal_uart()
+
+void is_new_signal_usbfs(void){
+    
+    uint8 sms[1];
+    
+    if( signal_changed_since_readout )
+        sms[0] = 'Y';
+    else
+        sms[0] = 'N';
+        
+    while (0u == USBUART_CDCIsReady())
+    {
+    }                  
+    USBUART_PutData( sms, 1 );          
+    
+}//END is_new_signal_usbfs()
+
+void set_trigger_threshold( uint8* buf ){
+    
+    int threshold = 0;
+    threshold += 100 * ((int)(buf[1]-'0'));
+    threshold +=  10 * ((int)(buf[2]-'0'));
+    threshold +=   1 * ((int)(buf[3]-'0'));
+    
+    VDAC8_Trigger_Signal_Threshold_SetValue( threshold );
+    
+}//END set_trigger_threshold( uint8* )
+
 CY_ISR( isr_start_sampling ){ 
     
+    En_Trigger_Signal_Write( TRIGGER_FROM_SIGNAL_OFF );
     
     vdac_val = 0;
     vdac_inc = TRUE;

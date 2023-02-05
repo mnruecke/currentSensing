@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 """ main settings """
 
 # Serial port:
-serialPort = '\\\\.\\COM5' # USBFS 8; UART 22 
+serialPort = '\\\\.\\COM13' # USBFS 8; UART 22 
 baudrate = 115200
 time_out = 10
 
@@ -44,10 +44,14 @@ p_run_sequ      = b'r' # starts the sequence
 p_get_data      = b'o' # requests binary ADC data
 p_get_data_head = b'h' # only the first 600 bytes
 p_get_chip_id   = b's'
+p_is_new_signal = b'n' # sends b'Y' back if true and b'N' if false
 
 U_adc_ref       = 400 # 0...999; U = 4.096 mV * U_adc_ref
 p_set_adc_ref   = bytes("a{:03}".format(U_adc_ref),'UTF-8')
 V_per_A         = 34.39 # V / A; Current sensor calibration
+
+U_trig_ref      = 200 # 0..255 ( = 0...4.096V)
+p_set_trig_ref  = bytes("t{:03}".format(U_trig_ref),'UTF-8')
 
 """ END - main settings """
 
@@ -55,16 +59,29 @@ V_per_A         = 34.39 # V / A; Current sensor calibration
 """ start measurement on PSoC and get data """
 try: # open and interact with serial port 
 
-    ser = serial.Serial( serialPort, baudrate, timeout=time_out)
+    ser = serial.Serial( serialPort, baudrate, timeout=time_out )
     
     for repetition_i in range( 1 ):
+    
+       
+        ser.write( p_set_trig_ref )
+        time.sleep( 0.005 )     
+   
+        ser.write( p_set_adc_ref )
+        time.sleep( 0.005 )    
     
         #ser.write( p_get_chip_id )
         #time.sleep( 0.005 )
         #print( "Chip: ", ser.read(34) )
         
-        ser.write( p_set_adc_ref )
+        ser.write( p_is_new_signal )
         time.sleep( 0.005 )
+        signal_status = ser.read(1)        
+        if signal_status == b'N':
+            print("Old signal")
+            time.sleep(0.5)
+            continue      
+        print("New signal")
         
         if software_trigger:
             ser.write( p_run_sequ )
@@ -110,9 +127,7 @@ try: # open and interact with serial port
     
         for ch in range( 0, num_of_channels ):
             
-            channel_t_shift = (     ch#(num_of_channels-ch-1)
-                                  * channel_switch_t_ms
-                              )    
+            channel_t_shift = ch * channel_switch_t_ms    
             x_time = t - channel_t_shift
             
             if data_is_interleaved:

@@ -103,6 +103,10 @@ CY_ISR( isr_adc_done ){
     }else{
         ++conversion_counter;   
     }// ifelse( conversion_counter >= N_MAX_SAMPLES )
+    
+    signal_changed_since_readout = TRUE;
+    
+    En_Trigger_Signal_Write( TRIGGER_FROM_SIGNAL_ON );
 
     LED_P2p1_Write(0u);
     
