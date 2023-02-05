@@ -33,7 +33,7 @@
     uint8 vdac_val_2;
     uint8 vdac_inc_2;
     
-    int signal_changed_since_readout;
+    _Bool signal_changed_since_readout;
     
     // SEQ ADC
     size_t conversion_counter;

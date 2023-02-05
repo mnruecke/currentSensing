@@ -7,7 +7,7 @@
 <wrkspc_folders />
 <files />
 <projects>
-<v>.\currentSensing_6CH.cydsn\currentSensing_6CH.cyprj</v>
+<v>.\currentSensing_6CH_ManualSwitch.cydsn\currentSensing_6CH_ManualSwitch.cyprj</v>
 <v>.\currentSensing_FastSampling.cydsn\currentSensing_FastSampling.cyprj</v>
 <v>.\code_drafts.cydsn\code_drafts.cyprj</v>
 <v>.\currentSensing_USBFS_ISR.cydsn\currentSensing_USBFS_ISR.cyprj</v>
