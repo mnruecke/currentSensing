@@ -20,6 +20,14 @@ int main(void)
     UART_1_Start();
     UART_1_PutString("Psoc running...\n\r");
     
+    IDAC8_1_Start();
+    IDAC8_2_Start();
+    IDAC8_3_Start();
+    IDAC8_4_Start();
+    
+    IDAC8_1_Data_PTR
+    
+    reg32 dac_3_downto_0_ptr = 0x40005b80u;
 
     int shift=0;
     char msg[80];
@@ -27,15 +35,18 @@ int main(void)
     {
         /* Place your application code here. */
         if( UART_1_GetRxBufferSize() > 0 ){
-            
             char uart_in = UART_1_GetChar();
-            
             if( uart_in == 's' )
                 shift = shift < 24 ? shift + 8 : 0;
-
+            if( uart_in == 'e' ){
+                *(uint32*)dac_3_downto_0_ptr = 255<<shift;
+            }
+            if( uart_in == 'a' ){
+                *(uint32*)dac_3_downto_0_ptr = 0;
+            }
             sprintf( msg, "Shift: %d\n\r", shift);
             UART_1_PutString( msg );
-           
+            
         }
     }
 }

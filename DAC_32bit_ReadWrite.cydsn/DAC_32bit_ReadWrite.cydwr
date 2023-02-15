@@ -3398,7 +3398,27 @@
     </Group>
   </Group>
   <Group key="PlaceDir">
-    <Data key="count" value="0" />
+    <Group key="0">
+      <Data key="name" value="\IDAC8_1:viDAC8\" />
+      <Data key="type" value="ForceComponentFixed" />
+      <Data key="value" value="F(VIDAC,0)" />
+    </Group>
+    <Group key="1">
+      <Data key="name" value="\IDAC8_2:viDAC8\" />
+      <Data key="type" value="ForceComponentFixed" />
+      <Data key="value" value="F(VIDAC,1)" />
+    </Group>
+    <Group key="2">
+      <Data key="name" value="\IDAC8_3:viDAC8\" />
+      <Data key="type" value="ForceComponentFixed" />
+      <Data key="value" value="F(VIDAC,2)" />
+    </Group>
+    <Group key="3">
+      <Data key="name" value="\IDAC8_4:viDAC8\" />
+      <Data key="type" value="ForceComponentFixed" />
+      <Data key="value" value="F(VIDAC,3)" />
+    </Group>
+    <Data key="count" value="4" />
   </Group>
   <Group key="System3">
     <Data key="CYDEV_CONFIG_FASTBOOT_ENABLED" value="True" />
