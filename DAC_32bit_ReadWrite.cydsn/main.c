@@ -25,9 +25,13 @@ int main(void)
     IDAC8_3_Start();
     IDAC8_4_Start();
     
-    IDAC8_1_Data_PTR
-    
-    reg32 dac_3_downto_0_ptr = 0x40005b80u;
+    // Pointer for 32 bit access of DAC1...DAC4
+    reg32 dac_0_to_3_data_ptr = (reg32) IDAC8_1_Data_PTR; // = 0x40005b80u;
+    // LSB:         IDAC8_1
+    // midByte 0:   IDAC8_2
+    // midByte 1:   IDAC8_3
+    // MSB:         IDAC8_4 
+    // (Order needs to be enforced with directives)
 
     int shift=0;
     char msg[80];
@@ -39,10 +43,10 @@ int main(void)
             if( uart_in == 's' )
                 shift = shift < 24 ? shift + 8 : 0;
             if( uart_in == 'e' ){
-                *(uint32*)dac_3_downto_0_ptr = 255<<shift;
+                *(uint32*)dac_0_to_3_data_ptr = 255<<shift;
             }
             if( uart_in == 'a' ){
-                *(uint32*)dac_3_downto_0_ptr = 0;
+                *(uint32*)dac_0_to_3_data_ptr = 0;
             }
             sprintf( msg, "Shift: %d\n\r", shift);
             UART_1_PutString( msg );
