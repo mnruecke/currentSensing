@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "rds_tx-rescue")(type "Legacy")(uri "${KIPRJMOD}/rds_tx-rescue.lib")(options "")(descr ""))
+)
