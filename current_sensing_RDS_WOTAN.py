@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 # Serial port:
 serialPort = '\\\\.\\COM3' # USBFS 8; UART 22 
 baudrate = 115200
-time_out = 10
+time_out = 0.5
 
 # sequence details
 bytesPerSample      = 2
@@ -30,7 +30,7 @@ sampling_time_ms    = 1/100 # kHz / kHz
 channel_switch_t_ms = 1/1000 # kHz / kHz
 
 software_trigger    = False
-data_is_interleaved = True
+data_is_interleaved = False
 send_head_only      = False
 head_size           = 600
 

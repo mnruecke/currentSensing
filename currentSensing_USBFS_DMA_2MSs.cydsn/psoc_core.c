@@ -206,27 +206,27 @@ void get_signal(void){
     char sms[80];    
     for(int i=0; i < N_MAX_SAMPLES/N_ADC_CHANNELS; ++i){
         sprintf( sms, "\t%d \t%d \t%d \n\r", i,
-            (int16) ADC_CurrentSens_CountsTo_mVolts( signal_dma1[i] - ADC_CurrentSens_SAR_shift ),
+            (int16) ADC_SAR_1_CountsTo_mVolts( signal_dma1[i] - ADC_SAR_1_shift ),
             i/N_ADC_CHANNELS
         );
         UART_PutString( sms );
         sprintf( sms, "\t%d \t%d \t%d \n\r", i,
-            (int16) ADC_CurrentSens_CountsTo_mVolts( signal_dma2[i] - ADC_CurrentSens_SAR_shift ),
+            (int16) ADC_SAR_1_CountsTo_mVolts( signal_dma2[i] - ADC_SAR_1_shift ),
             i/N_ADC_CHANNELS
         );
         UART_PutString( sms );
         sprintf( sms, "\t%d \t%d \t%d \n\r", i,
-            (int16) ADC_CurrentSens_CountsTo_mVolts( signal_dma3[i] - ADC_CurrentSens_SAR_shift ),
+            (int16) ADC_SAR_1_CountsTo_mVolts( signal_dma3[i] - ADC_SAR_1_shift ),
             i/N_ADC_CHANNELS
         );
         UART_PutString( sms );
         sprintf( sms, "\t%d \t%d \t%d \n\r", i,
-            (int16) ADC_CurrentSens_CountsTo_mVolts( signal_dma4[i] - ADC_CurrentSens_SAR_shift ),
+            (int16) ADC_SAR_1_CountsTo_mVolts( signal_dma4[i] - ADC_SAR_1_shift ),
             i/N_ADC_CHANNELS
         );
         UART_PutString( sms );
         sprintf( sms, "\t%d \t%d \t%d \n\r", i,
-            (int16) ADC_CurrentSens_CountsTo_mVolts( signal_dma5[i] - ADC_CurrentSens_SAR_shift ),
+            (int16) ADC_SAR_1_CountsTo_mVolts( signal_dma5[i] - ADC_SAR_1_shift ),
             i/N_ADC_CHANNELS
         );
         UART_PutString( sms );
